@@ -1,0 +1,1 @@
+TreeSHAP cost rises ~7.1x across the clean iterations (284s to 2022s) with local variation, falling back on 3 of 12 steps. Ensemble fit time stays flat throughout (20-33s), so the growth is specific to explanation, not to training.

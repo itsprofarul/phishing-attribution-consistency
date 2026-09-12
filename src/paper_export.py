@@ -42,7 +42,7 @@ PAPER_FIG_DIR.mkdir(parents=True, exist_ok=True)
 # Greyscale-safe, colour-blind-safe; distinguishable when printed in mono.
 PALETTE = ["#1b1b1b", "#6e6e6e", "#b0b0b0", "#3b6ea5", "#a5443b"]
 plt.rcParams.update({
-    "figure.dpi": 150, "savefig.dpi": 300,
+    "figure.dpi": 150, "savefig.dpi": 600,
     "font.size": 9, "axes.titlesize": 10, "axes.labelsize": 9,
     "legend.fontsize": 8, "xtick.labelsize": 8, "ytick.labelsize": 8,
     "axes.spines.top": False, "axes.spines.right": False,
@@ -50,6 +50,37 @@ plt.rcParams.update({
 })
 # Springer two-column: ~3.35in single column, ~6.9in full width.
 COL_W, FULL_W = 3.35, 6.9
+
+# Internal identifiers -> the names used in the manuscript. Figures are read by
+# people who have never seen the config keys, so no codename may reach a label.
+#
+# NOTE: `uci_dedup` has no counterpart in the manuscript's dataset list because it
+# is a sensitivity VARIANT of UCI Phishing Websites rather than a separate
+# benchmark. It is named consistently with that scheme here.
+DISPLAY = {
+    "phiusiil": "PhiUSIIL",
+    "phiusiil_full": "PhiUSIIL",
+    "phiusiil_leakfree": "PhiUSIIL (leak-controlled)",
+    "uci": "UCI Phishing Websites",
+    "uci_full": "UCI Phishing Websites",
+    "uci_dedup": "UCI Phishing Websites (de-duplicated)",
+    "uci379_website_phishing": "UCI Website Phishing",
+    "uci379_website_phishing__suspicious_dropped": "UCI Website Phishing (variant)",
+    "mendeley_hannousse": "Mendeley (Hannousse)",
+    "mendeley_tan": "Mendeley (Tan)",
+}
+PANEL_LETTERS = ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)"]
+
+
+def disp(key) -> str:
+    """Manuscript name for an internal key, unchanged if already display-form."""
+    return DISPLAY.get(str(key), str(key))
+
+
+def panel_letter(ax, i: int) -> None:
+    """Panel letter above the axes, where no title now competes for the space."""
+    ax.text(0.0, 1.02, PANEL_LETTERS[i], transform=ax.transAxes,
+            fontsize=9, fontweight="bold", va="bottom", ha="left")
 
 
 def _read(path: Path) -> pd.DataFrame | None:
@@ -301,7 +332,7 @@ def fig_single_feature_power() -> bool:
     for i, (ds, g) in enumerate(df.groupby("dataset")):
         vals = g.nlargest(15, "accuracy")["accuracy"].to_numpy()
         ax.plot(range(1, len(vals) + 1), vals, marker="o", ms=3.5, lw=1.2,
-                color=PALETTE[i % len(PALETTE)], label=ds)
+                color=PALETTE[i % len(PALETTE)], label=disp(ds))
     ax.axhline(0.95, ls="--", lw=1.0, color=PALETTE[4],
                label="0.95 single-feature threshold")
     ax.set_xlabel("feature rank"); ax.set_ylabel("single-feature accuracy")
@@ -321,7 +352,6 @@ def fig_progressive_removal() -> bool:
             color=PALETTE[0])
     ax.axhline(0.99, ls="--", lw=1.0, color=PALETTE[4], label="0.99 de-leak target")
     ax.set_xlabel("features removed"); ax.set_ylabel("held-out accuracy")
-    ax.set_title("PhiUSIIL: accuracy vs features removed")
     ax.legend(frameon=False)
     fig.tight_layout(); fig.savefig(PAPER_FIG_DIR / "f4_progressive_removal.png")
     plt.close(fig)
@@ -340,11 +370,23 @@ def fig_transfer_matrix() -> bool:
     for i, r in df.iterrows():
         ax.plot([i - 0.3, i + 0.3], [r["majority_class_accuracy"]] * 2,
                 ls=":", lw=1.4, color=PALETTE[4])
-    ax.set_xticks(x); ax.set_xticklabels(df["direction"], rotation=12, ha="right")
+    pretty = [" \u2192 ".join(disp(part) for part in str(d).split("->"))
+              for d in df["direction"]]
+    ax.set_xticks(x); ax.set_xticklabels(pretty, rotation=15, ha="right", fontsize=7)
     ax.set_ylabel("accuracy"); ax.set_ylim(0, 1.05)
-    ax.set_title("Zero-shot transfer: in-distribution (dark) vs cross-distribution "
-                 "(light)\ndotted = majority-class baseline")
-    fig.tight_layout(); fig.savefig(PAPER_FIG_DIR / "f5_transfer_matrix.png")
+
+    # The removed title was carrying the key; restore it as a legend outside the
+    # plot area so the shading and the dotted line remain interpretable.
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    handles = [Patch(facecolor=PALETTE[0], label="in-distribution"),
+               Patch(facecolor=PALETTE[2], label="cross-distribution"),
+               Line2D([0], [0], color=PALETTE[4], ls=":", lw=1.4,
+                      label="majority-class baseline")]
+    fig.legend(handles=handles, loc="lower center", ncol=3, frameon=False,
+               fontsize=7.5, bbox_to_anchor=(0.5, -0.02))
+    fig.tight_layout(rect=(0, 0.06, 1, 1))
+    fig.savefig(PAPER_FIG_DIR / "f5_transfer_matrix.png")
     plt.close(fig)
     return True
 
@@ -370,7 +412,7 @@ def fig_explanation_cost() -> bool:
             color=PALETTE[0], label="TreeSHAP seconds (clean)")
     if len(bad):
         ax.plot(bad["iteration"], bad["shap_seconds"], marker="o", ms=4, lw=0,
-                mfc="none", mec=PALETTE[0], label="contended (excluded)")
+                mfc="none", mec=PALETTE[0], label="excluded (CPU contention)")
     ax.plot(df["iteration"], df["fit_seconds"], marker="s", ms=3, lw=1.2,
             color=PALETTE[2], label="ensemble fit seconds")
     ax.set_xlabel("features removed"); ax.set_ylabel("wall-clock seconds")
@@ -380,9 +422,12 @@ def fig_explanation_cost() -> bool:
              color=PALETTE[3], label="held-out accuracy")
     ax2.set_ylabel("accuracy"); ax2.grid(False)
 
+    # The accuracy series starts at the top-left, where the legend used to sit.
+    # Placing it below the axes removes the overlap entirely.
     h1, l1 = ax.get_legend_handles_labels(); h2, l2 = ax2.get_legend_handles_labels()
-    ax.legend(h1 + h2, l1 + l2, frameon=False, loc="upper left", fontsize=7)
-    fig.tight_layout(); fig.savefig(PAPER_FIG_DIR / "f8_explanation_cost_curve.png")
+    fig.legend(h1 + h2, l1 + l2, frameon=False, loc="lower center", ncol=4,
+               fontsize=7, bbox_to_anchor=(0.5, -0.03))
+    fig.tight_layout(rect=(0, 0.07, 1, 1)); fig.savefig(PAPER_FIG_DIR / "f8_explanation_cost_curve.png")
     plt.close(fig)
 
     desc_path = LEAK_DIR / "explanation_cost_description.json"
@@ -409,7 +454,8 @@ def fig_leak_distributions() -> bool:
         return False
 
     fig, axes = plt.subplots(1, 3, figsize=(FULL_W, 2.5))
-    for ax, feat in zip(axes, feats):
+    for i, (ax, feat) in enumerate(zip(axes, feats)):
+        panel_letter(ax, i)
         v = X[feat].to_numpy(dtype=float)
         lo, hi = float(np.percentile(v, 0.5)), float(np.percentile(v, 99.5))
         if hi <= lo:
@@ -447,14 +493,16 @@ def fig_within_vs_cross() -> bool:
         return False
 
     e2s = e2.sort_values("kendall_tau_mean", ascending=False)
-    within = [(str(r["config"]), float(r["kendall_tau_mean"]),
+    within = [(disp(r["config"]), float(r["kendall_tau_mean"]),
                float(r["kendall_tau_std"])) for _, r in e2s.iterrows()]
     g = cx.groupby("dataset_b")["kendall_tau"].agg(["mean", "std"])
     g = g.sort_values("mean", ascending=False)
     cross = []
     for name, r in g.iterrows():
         sd = float(r["std"]) if pd.notna(r["std"]) else 0.0
-        cross.append(("uci vs\n" + str(name), float(r["mean"]), sd))
+        # Every cross pairing is against UCI Phishing Websites, so the tick
+        # names only the partner and the band label carries the reference.
+        cross.append((disp(name), float(r["mean"]), sd))
 
     labels = [w[0] for w in within] + [c[0] for c in cross]
     means = [w[1] for w in within] + [c[1] for c in cross]
@@ -470,11 +518,11 @@ def fig_within_vs_cross() -> bool:
 
     ceiling = None
     for lbl, m, _s in within:
-        if lbl == "uci_full":
+        if lbl == disp("uci_full"):
             ceiling = m
     if ceiling is not None:
         ax.axhline(ceiling, ls="--", lw=1.1, color=PALETTE[4])
-        ax.annotate("within-dataset ceiling (uci_full) = %.2f" % ceiling,
+        ax.annotate("within-dataset ceiling (%s) = %.2f" % (disp("uci_full"), ceiling),
                     xy=(len(means) - 0.45, ceiling), xytext=(0, -12),
                     textcoords="offset points", ha="right", fontsize=7.5,
                     color=PALETTE[4])
@@ -485,7 +533,8 @@ def fig_within_vs_cross() -> bool:
     ax.text((n_w - 1) / 2.0, 0.975, "WITHIN dataset (two halves)", ha="center",
             va="top", fontsize=8, color=PALETTE[0], fontweight="bold",
             transform=ax.get_xaxis_transform())
-    ax.text(n_w + (len(cross) - 1) / 2.0, 0.975, "ACROSS datasets", ha="center",
+    ax.text(n_w + (len(cross) - 1) / 2.0, 0.975,
+            "ACROSS datasets (vs UCI Phishing Websites)", ha="center",
             va="top", fontsize=8, color=PALETTE[3], fontweight="bold",
             transform=ax.get_xaxis_transform())
 
@@ -496,8 +545,11 @@ def fig_within_vs_cross() -> bool:
             ax.annotate("%.2f" % m, xy=(xi, m + e), xytext=(0, 5),
                         textcoords="offset points", ha="center", fontsize=7)
         else:
-            ax.annotate("%.2f" % m, xy=(xi, m - e), xytext=(0, -11),
-                        textcoords="offset points", ha="center", fontsize=7)
+            # Below the error bar the label ran into the x tick labels. Place it
+            # inside the bar instead, just under the zero line.
+            ax.annotate("%.2f" % m, xy=(xi, 0), xytext=(0, -13),
+                        textcoords="offset points", ha="center", va="top",
+                        fontsize=7, color="white", fontweight="bold")
 
     ax.set_xticks(x)
     ax.set_xticklabels(labels, rotation=18, ha="right", fontsize=7)
@@ -564,7 +616,8 @@ def fig_group_shap_mass() -> bool:
     from src.cross_dataset import shared_schema, shared_schema_leakfree
 
     fig, axes = plt.subplots(1, len(panels), figsize=(FULL_W, 3.0), squeeze=False)
-    for ax, (pk, a, b) in zip(axes[0], panels):
+    for i, (ax, (pk, a, b)) in enumerate(zip(axes[0], panels)):
+        panel_letter(ax, i)
         try:
             if pk == "phiusiil_leakfree":
                 names = shared_schema_leakfree()[4]
@@ -577,14 +630,15 @@ def fig_group_shap_mass() -> bool:
             names.append("f%d" % len(names))
         idx = np.argsort(-a)
         yy = np.arange(len(idx))
-        ax.barh(yy - 0.2, a[idx], height=0.38, color=PALETTE[0], label="uci (reference)")
+        ax.barh(yy - 0.2, a[idx], height=0.38, color=PALETTE[0],
+                label="UCI Phishing Websites (reference)")
         ax.barh(yy + 0.2, b[idx], height=0.38, color=PALETTE[3], label="partner dataset")
         ax.set_yticks(yy)
         ax.set_yticklabels([names[i] for i in idx], fontsize=6.5)
         ax.invert_yaxis()
         # The partner name moves from a panel title into the axis label: it is the
         # only thing distinguishing the panels, and axis labels are permitted.
-        ax.set_xlabel("share of total mean |SHAP|\nuci vs %s" % pk, fontsize=7)
+        ax.set_xlabel("share of total mean |SHAP|\nvs %s" % disp(pk), fontsize=7)
     # One figure-level legend: a per-axes legend overprints the shortest bars, and
     # the partner is already named in each panel title.
     handles, lbls = axes[0][0].get_legend_handles_labels()
