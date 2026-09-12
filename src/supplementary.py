@@ -114,6 +114,11 @@ TABLE_CAPTIONS = {
 }
 EXCLUDED_TABLES = {"t1", "t2", "t5", "t8", "t9", "t10", "t15"}
 
+# Held record-wise by request: too many columns for any readable table.
+RECORD_WISE_TABLES = {"t6", "t7", "t12", "t16"}
+# At or below this many columns a table is rendered as a table, always.
+MAX_COLS_TABULAR = 8
+
 
 def _pdf_metadata(pdf: PdfPages, title: str) -> None:
     """Anonymous PDF metadata; defaults would name the toolchain and the file."""
@@ -156,7 +161,9 @@ def build_esm1() -> dict:
     with out.open("w", encoding="utf-8", newline="") as fh:
         for line in ESM1_HEADER:
             fh.write(scrub(line, "ESM_1 header") + "\n")
-        df.to_csv(fh, index=False)
+        # na_rep pinned explicitly: an empty cell must reach the reader as a
+        # blank, never as the string 'nan'.
+        df.to_csv(fh, index=False, na_rep="")
 
     counts = df["status"].value_counts().to_dict()
     log.info("ESM_1 -> %s", out.name)
@@ -210,33 +217,126 @@ def _text_pages(pdf: PdfPages, heading: str, body_lines: list[str],
     return pages
 
 
-def _frame_to_lines(df: pd.DataFrame, width: int = 118) -> list[str]:
-    """Horizontal layout when it fits, otherwise one record per block."""
+# --------------------------------------------------------------------------- #
+# Frame rendering
+#
+# Two layouts. A real table is preferable wherever the columns can be given
+# enough width to stay legible, so it is tried first and the font is stepped
+# down until the rows stop wrapping. Record-wise key/value blocks are the
+# fallback for frames whose cells hold prose rather than values, where a table
+# would wrap every row into an unreadable stack.
+# --------------------------------------------------------------------------- #
+MONO_EM = 0.602        # DejaVu Sans Mono advance width, in em
+TEXT_FRAC = 0.88       # fraction of the page width the text block occupies
+BLOCK_IN = 62 * 1.2 * 7.0 / 72.0      # height of the 62-line 7pt block, inches
+FONT_LADDER = (7.0, 6.5, 6.0, 5.5, 5.0)
+WRAP_BUDGET = 1.35     # accept a font once rows average at most this many lines
+RECORDS_ABOVE = 2.0    # past this even the smallest font is not worth a table
+
+
+def _cell(v) -> str:
+    """Text for one cell. A missing value renders blank, never as 'nan'."""
+    try:
+        if pd.isna(v):
+            return ""
+    except (TypeError, ValueError):       # arrays and other non-scalars
+        pass
+    s = str(v)
+    return "" if s.strip().lower() in {"nan", "nat", "none", "<na>"} else s
+
+
+def _char_budget(pt: float) -> int:
+    """How many monospace characters fit across the text block at this size."""
+    return int(PAGE_W * TEXT_FRAC / (MONO_EM * pt / 72.0))
+
+
+def _lines_per_page(pt: float) -> int:
+    """Keep the text block the same height whatever the font size."""
+    return int(BLOCK_IN / (1.2 * pt / 72.0))
+
+
+def _fit_widths(df: pd.DataFrame, cols: list[str], budget: int,
+                floor: int = 6) -> dict:
+    """Shrink the widest column repeatedly until a row fits the budget.
+
+    A number is one token: wrapping 0.9967374960991802 across two lines makes
+    it unreadable and invites misreading. Numeric columns are therefore held at
+    their full width while any text column can still give ground, and are only
+    shrunk when nothing else is left to take.
+    """
+    w = {c: max([len(str(c))] + [len(_cell(v)) for v in df[c]]) for c in cols}
+    text_cols = [c for c in cols if not pd.api.types.is_numeric_dtype(df[c])]
+
+    def span() -> int:
+        return sum(w.values()) + 2 * (len(cols) - 1)
+
+    while span() > budget:
+        pool = [c for c in text_cols if w[c] > floor] or \
+               [c for c in cols if w[c] > floor]
+        if not pool:                      # everything is already at the floor
+            break
+        w[max(pool, key=lambda c: w[c])] -= 1
+    return w
+
+
+def _table_body(df: pd.DataFrame, cols: list[str],
+                w: dict) -> tuple[list[str], int]:
+    """Header, rule and rows, wrapped inside each column so nothing is cut."""
+    def line(parts: list[list[str]], i: int) -> str:
+        return "  ".join((parts[j][i] if i < len(parts[j]) else "").ljust(w[c])
+                         for j, c in enumerate(cols)).rstrip()
+
+    head = [textwrap.wrap(str(c), w[c]) or [""] for c in cols]
+    out = [line(head, i) for i in range(max(len(h) for h in head))]
+    out.append("-" * (sum(w.values()) + 2 * (len(cols) - 1)))
+
+    blocks, tall = [], False
+    for _, r in df.iterrows():
+        cells = [textwrap.wrap(_cell(r[c]), w[c]) or [""] for c in cols]
+        height = max(len(c) for c in cells)
+        tall = tall or height > 1
+        blocks.append([line(cells, i) for i in range(height)])
+
+    for block in blocks:
+        out.extend(block)
+        if tall:                          # blank line keeps wrapped rows apart
+            out.append("")
+    return out, sum(len(b) for b in blocks)
+
+
+def _records(df: pd.DataFrame, width: int = 118) -> list[str]:
+    """One key/value block per row; nothing is truncated."""
     cols = list(df.columns)
-    widths = {c: max([len(str(c))] + [len(str(v)) for v in df[c].astype(str)])
-              for c in cols}
-    total = sum(min(widths[c], 34) + 2 for c in cols)
-
-    if total <= width:
-        w = {c: min(widths[c], 34) for c in cols}
-        out = ["  ".join(str(c).ljust(w[c])[:w[c]] for c in cols),
-               "-" * min(total, width)]
-        for _, r in df.iterrows():
-            out.append("  ".join(str(r[c]).ljust(w[c])[:w[c]] for c in cols))
-        return out
-
-    # Too wide for a readable table: render record-wise so nothing is truncated.
     out = []
     label_w = max(len(str(c)) for c in cols)
     for i, (_, r) in enumerate(df.iterrows(), start=1):
         out.append(f"[record {i} of {len(df)}]")
         for c in cols:
-            wrapped = textwrap.wrap(str(r[c]), width=width - label_w - 3) or [""]
+            wrapped = textwrap.wrap(_cell(r[c]), width=width - label_w - 3) or [""]
             out.append(f"{str(c).rjust(label_w)} : {wrapped[0]}")
             for cont in wrapped[1:]:
                 out.append(f"{' ' * label_w}   {cont}")
         out.append("")
     return out
+
+
+def _render_frame(df: pd.DataFrame, force_records: bool = False,
+                  force_table: bool = False) -> tuple[list[str], float, int, str]:
+    """Return (lines, mono_pt, lines_per_page, layout)."""
+    if not force_records:
+        cols = list(df.columns)
+        chosen = None
+        for pt in FONT_LADDER:
+            lines, used = _table_body(df, cols,
+                                      _fit_widths(df, cols, _char_budget(pt)))
+            chosen = (lines, pt, used / max(len(df), 1))
+            if chosen[2] <= WRAP_BUDGET:
+                break
+        lines, pt, avg = chosen
+        if force_table or avg <= RECORDS_ABOVE:
+            return lines, pt, _lines_per_page(pt), "table"
+
+    return _records(df), 7.0, 62, "records"
 
 
 # --------------------------------------------------------------------------- #
@@ -298,7 +398,8 @@ def build_esm2() -> dict:
             ]
             label = ("SHAP sample-size convergence check: Kendall's tau between "
                      "attribution rankings computed at successive sample sizes.")
-            pages += _text_pages(pdf, label, _frame_to_lines(show) + note)
+            lines, mono, lpp, _ = _render_frame(show)
+            pages += _text_pages(pdf, label, lines + note, lpp, mono)
             contents.append(("table",
                              f"SHAP convergence ({len(show)} rows, {n_deg} degenerate)"))
         else:
@@ -330,14 +431,18 @@ def build_esm3() -> dict:
                 continue
             df = scrub_frame(pd.read_csv(p), f"ESM_3 {tid}")
             heading = f"Table {tid.upper()}. {TABLE_CAPTIONS.get(tid, '')}"
-            n = _text_pages(pdf, heading, _frame_to_lines(df))
-            included.append((tid, len(df), len(df.columns), n))
+            wide = tid in RECORD_WISE_TABLES
+            lines, mono, lpp, layout = _render_frame(
+                df, force_records=wide,
+                force_table=not wide and len(df.columns) <= MAX_COLS_TABULAR)
+            n = _text_pages(pdf, heading, lines, lpp, mono)
+            included.append((tid, len(df), len(df.columns), n, layout, mono))
 
-    total = sum(n for *_, n in included)
+    total = sum(row[3] for row in included)
     log.info("ESM_3 -> %s (%d pages)", out.name, total)
-    for tid, rows, cols, n in included:
-        log.info("  %-4s %3d rows x %2d cols  (%d page%s)",
-                 tid.upper(), rows, cols, n, "" if n == 1 else "s")
+    for tid, rows, cols, n, layout, mono in included:
+        log.info("  %-4s %3d rows x %2d cols  %-8s %.1fpt  (%d page%s)",
+                 tid.upper(), rows, cols, layout, mono, n, "" if n == 1 else "s")
     log.info("  excluded by request: %s", sorted(skipped))
     return {"path": out, "included": included, "skipped": sorted(skipped),
             "pages": total}
