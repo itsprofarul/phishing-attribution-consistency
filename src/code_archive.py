@@ -42,7 +42,11 @@ ARCHIVE = OUT_DIR / "ESM_4_code.zip"
 ARCHIVE_PREFIX = "phishing-attribution-consistency"
 
 EXCLUDE_DIRS = {".git", ".claude", "data", "__pycache__", ".pytest_cache", ".venv"}
-EXCLUDE_SUFFIXES = {".pyc"}
+# Run logs are excluded outright rather than redacted. A log records whatever
+# the pipeline happened to print, including absolute paths and usernames, and
+# is the one class of file where new identifying content can appear on any run
+# without anyone editing anything.
+EXCLUDE_SUFFIXES = {".pyc", ".log"}
 # Posix-style, relative to the repository root.
 EXCLUDE_PATHS = {
     "submission/supplementary",   # would nest the ESM files inside the archive
