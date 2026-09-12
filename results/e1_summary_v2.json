@@ -141,8 +141,8 @@
       "f1_std": 0.00561,
       "mcc_mean": 0.899391,
       "mcc_std": 0.010836,
-      "roc_auc_mean": 0.990201,
-      "roc_auc_std": 0.002112
+      "roc_auc_mean": 0.9902,
+      "roc_auc_std": 0.002113
     },
     {
       "config": "uci_dedup",

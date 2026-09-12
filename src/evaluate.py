@@ -124,10 +124,11 @@ def plot_confusion(dataset: str, model: str, cm: np.ndarray, n_seeds: int) -> Pa
                 yticklabels=["legitimate", "phishing"])
     ax.set_xlabel("predicted")
     ax.set_ylabel("actual")
-    ax.set_title(f"{dataset} - {DISPLAY_NAMES[model]}\n(summed over {n_seeds} seeds)")
+    # No title inside the plot area: the supplementary PDF carries a
+    # one-line label above each matrix.
     fig.tight_layout()
     out = FIGURES_DIR / f"confusion_{dataset}_{model}.png"
-    fig.savefig(out, dpi=150)
+    fig.savefig(out, dpi=600)
     plt.close(fig)
     return out
 
