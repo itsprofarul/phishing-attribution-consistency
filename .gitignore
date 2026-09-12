@@ -9,3 +9,7 @@ __pycache__/
 .pytest_cache/
 scratchpad/
 recovery_status.txt
+
+# ESM_4 is a build artifact: rebuild with `python -m src.code_archive`.
+# It is ~5.5 MB and regenerated from the tree, so it does not belong in git.
+submission/supplementary/ESM_4_code.zip

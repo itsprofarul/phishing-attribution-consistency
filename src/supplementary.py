@@ -46,14 +46,24 @@ DPI = 600
 # --------------------------------------------------------------------------- #
 # Anonymity
 # --------------------------------------------------------------------------- #
-FORBIDDEN = [
-    (re.compile(r"Prof\s*CSCyber", re.I), "author account name"),
-    (re.compile(r"itsprofarul", re.I), "author handle"),
-    (re.compile(r"Natarajan", re.I), "author surname"),
-    (re.compile(r"Samarkand", re.I), "affiliation"),
-    (re.compile(r"github\.com", re.I), "repository URL"),
+# The author-identifying terms live in src/identity_terms.py, which is the one
+# module excluded from the ESM_4 code archive: a file that must name the strings
+# it protects cannot itself travel to reviewers. Absent that module there is no
+# author identity in this copy to protect, so only the generic patterns apply.
+try:
+    from src.identity_terms import IDENTITY_TERMS
+except ImportError:
+    try:
+        from identity_terms import IDENTITY_TERMS
+    except ImportError:                    # anonymised copy: no terms configured
+        IDENTITY_TERMS = []
+
+FORBIDDEN = [(re.compile(pat, re.I), what) for pat, what in IDENTITY_TERMS] + [
     (re.compile(r"[A-Za-z]:\\"), "absolute Windows path"),
-    (re.compile(r"/Users/|/home/"), "absolute POSIX path"),
+    # Written as an alternation rather than a literal path prefix, so the
+    # anonymity tooling does not trip its own detector when it is archived.
+    (re.compile(r"[A-Za-z]:/(?:Users|home)/"), "absolute Windows path"),
+    (re.compile(r"/(?:Users|home)/"), "absolute POSIX path"),
     (re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"), "email address"),
 ]
 

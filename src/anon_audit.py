@@ -24,9 +24,24 @@ from pathlib import Path
 
 BS = chr(92)  # backslash, spelled out to keep the regexes below readable
 
-TERMS = ["Prof CSCyber", "itsprofarul", "Natarajan", "Samarkand",
-         "github.com", "C:" + BS]
-EXTRA = [("absolute POSIX path", re.compile(b"/Users/|/home/")),
+# Author-identifying terms come from src/identity_terms.py, the one module kept
+# out of the ESM_4 code archive: this file must name the strings it searches
+# for, so shipping it with them defeats the anonymisation. Without that module
+# only the generic path patterns below apply, which is correct for a reviewer.
+try:
+    from identity_terms import IDENTITY_TERMS
+except ImportError:                        # anonymised copy: no terms configured
+    try:
+        from src.identity_terms import IDENTITY_TERMS
+    except ImportError:
+        IDENTITY_TERMS = []
+
+TERMS = [(what, re.compile(pat.encode(), re.I)) for pat, what in IDENTITY_TERMS] + [
+    ("absolute Windows path", re.compile(re.escape("C:" + BS).encode(), re.I)),
+]
+# Alternation rather than the literal path prefixes, so this file does not
+# match its own patterns when it travels inside the anonymised code archive.
+EXTRA = [("absolute POSIX path", re.compile(b"/(?:Users|home)/")),
          ("email address",
           re.compile(b"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+" + BS.encode() + b".[A-Za-z]{2,}"))]
 INFO_KEYS = (b"Title", b"Author", b"Subject", b"Keywords", b"Creator",
@@ -110,11 +125,11 @@ def main() -> int:
             layers["visible text"] = shown_text(raw)
 
         hits = []
-        for term in TERMS:
-            pat = re.compile(re.escape(term).encode(), re.I)
+        for what, pat in TERMS:
             for layer, blob in layers.items():
-                if pat.search(blob):
-                    hits.append("{!r} in {}".format(term, layer))
+                m = pat.search(blob)
+                if m:
+                    hits.append("{} {!r} in {}".format(what, m.group(0)[:40], layer))
         for label, pat in EXTRA:
             for layer, blob in layers.items():
                 m = pat.search(blob)

@@ -613,12 +613,14 @@ def remeasure_iterations(iterations: list[int] | None = None, seed: int = 42,
 if __name__ == "__main__":
     import argparse
 
-    scratch = Path("C:/Users/PROFCS~1/AppData/Local/Temp/claude/"
-                   "C--Users-Prof-CSCyber-Downloads--74----SCI-Springer-Journal-Code/"
-                   "154fcbfb-0e83-474f-ba71-7992eb72f61f/scratchpad")
+    # Default to the run logs kept with the results. The A1.3 iteration timings
+    # were originally read from a scratch directory on the author's machine; an
+    # absolute path from one machine is useless everywhere else, so pass --logs
+    # to point at wherever the run was actually logged.
+    default_logs = sorted(RESULTS_DIR.glob("*a13*.log")) or [RESULTS_DIR / "phase_a.log"]
     ap = argparse.ArgumentParser(description="Task B5b: explanation cost profile")
-    ap.add_argument("--logs", nargs="*",
-                    default=[str(scratch / "a13.log"), str(scratch / "a13_resume.log")])
+    ap.add_argument("--logs", nargs="*", default=[str(p) for p in default_logs],
+                    help="run logs carrying the A1.3 per-iteration timings")
     ap.add_argument("--remeasure", nargs="*", type=int, default=None,
                     help="re-run these A1.3 iterations uncontended, recording tree "
                          "structure and clean timings (omit values for all)")
