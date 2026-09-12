@@ -442,18 +442,19 @@ def reproducibility_notes() -> pd.DataFrame:
     but it must not be quoted as a precise measurement.
     """
     notes = [{
-        "observation": "uci_full E2 explanation cost rose ~3.5x against the same data "
-                       "under the previous hyperparameters",
+        "observation": "UCI Phishing Websites E2 explanation cost rose ~3.5x against "
+                       "the same data under the previous hyperparameters",
         "measured_before_seconds": 447.0,
         "measured_after_seconds": 1581.3,
         "ratio": round(1581.3 / 447.0, 2),
         "driver": "RandomForest n_estimators 100 -> 500",
         "driver_exact": True,
-        "driver_detail": ("uci_full received its own hyperparameter search in A4 "
-                          "(justified: it carries 11,055 rows against uci_dedup's "
-                          "5,849). That search selected 500 trees where the earlier "
-                          "uci parameters used 100 - a 5x increase in the forest the "
-                          "explainer must walk."),
+        "driver_detail": ("UCI Phishing Websites received its own hyperparameter "
+                          "search in A4 (justified: it carries 11,055 rows against "
+                          "the de-duplicated variant's 5,849). That search selected "
+                          "500 trees where the earlier parameters for this dataset "
+                          "used 100 - a 5x increase in the forest the explainer must "
+                          "walk."),
         "mechanism": ("Interventional TreeSHAP cost scales with the total node count "
                       "of the model being explained, so explanation cost tracks model "
                       "complexity regardless of WHY the complexity changed."),
@@ -474,7 +475,7 @@ def reproducibility_notes() -> pd.DataFrame:
                             "be quoted as 'roughly 3.5x' or re-measured on an idle "
                             "machine before being stated precisely."),
         "n_explained": 5527,
-        "source": "A5 uci_full seed 42/43, half A",
+        "source": "A5 UCI Phishing Websites seed 42/43, half A",
     }]
     df = pd.DataFrame(notes)
     write_csv_atomic(df, RESULTS_DIR / "reproducibility_notes.csv")
