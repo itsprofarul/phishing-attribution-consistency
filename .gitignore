@@ -1,0 +1,11 @@
+data/
+__pycache__/
+*.pyc
+*.npy
+*.pkl
+*.joblib
+*.log
+.venv/
+.pytest_cache/
+scratchpad/
+recovery_status.txt

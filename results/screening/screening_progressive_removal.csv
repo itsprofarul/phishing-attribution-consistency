@@ -1,0 +1,10 @@
+dataset,iteration,n_features,accuracy,f1,mcc,fit_seconds,shap_seconds,mean_tree_depth,total_nodes,removed_feature,top_feature,hyperparameter_regime
+uci379_website_phishing,0,9,0.9064039408866995,0.9243027888446215,0.8056806781916287,1.77,0.01,11.693333333333333,54348,,SFH,retuned_per_feature_set
+uci379_website_phishing__suspicious_dropped,0,9,0.9202127659574468,0.9302325581395349,0.8375517998895313,1.23,0.01,9.48,9690,,SFH,retuned_per_feature_set
+mendeley_hannousse,0,87,0.965597667638484,0.9658762290341237,0.9313385142064948,2.96,0.01,21.58,472714,,page_rank,retuned_per_feature_set
+mendeley_tan,0,48,0.9873333333333333,0.9873248832555037,0.9746675330381922,1.9,0.01,19.966666666666665,234594,PctExtHyperlinks,PctExtHyperlinks,retuned_per_feature_set
+mendeley_tan,1,47,0.9826666666666667,0.9826666666666667,0.9653333333333334,1.85,338.12,20.0,271312,PctExtNullSelfRedirectHyperlinksRT,PctExtNullSelfRedirectHyperlinksRT,tuned_on_full_feature_set
+mendeley_tan,2,46,0.9806666666666667,0.980653769179453,0.9613341878529912,2.32,356.45,20.0,310536,PctNullSelfRedirectHyperlinks,PctNullSelfRedirectHyperlinks,tuned_on_full_feature_set
+mendeley_tan,3,45,0.9753333333333334,0.9752839011356046,0.9506742720912652,2.24,372.43,20.0,343486,FrequentDomainNameMismatch,FrequentDomainNameMismatch,tuned_on_full_feature_set
+mendeley_tan,4,44,0.972,0.9720372836218375,0.9440033564623456,2.22,381.82,20.0,382488,PctExtResourceUrls,PctExtResourceUrls,tuned_on_full_feature_set
+mendeley_tan,5,43,0.9646666666666667,0.9650165016501651,0.9295192557785931,2.19,414.92,20.0,423066,,ExtMetaScriptLinkRT,tuned_on_full_feature_set

@@ -1,0 +1,17 @@
+{
+  "concepts_used": [
+    "ip_in_domain",
+    "url_length",
+    "subdomain_depth",
+    "iframe",
+    "popup",
+    "url_redirect",
+    "form_handler"
+  ],
+  "concepts_lost_to_deleaking": {
+    "ssl_state": "source feature(s) removed by de-leaking: ['IsHTTPS']",
+    "anchor_external_ratio": "source feature(s) removed by de-leaking: ['NoOfExternalRef', 'NoOfSelfRef']"
+  },
+  "n_used": 7,
+  "n_lost": 2
+}

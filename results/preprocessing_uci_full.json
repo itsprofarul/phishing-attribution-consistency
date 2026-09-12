@@ -1,0 +1,25 @@
+{
+  "dataset": "uci",
+  "deduplicated": false,
+  "dropped_columns": [],
+  "duplicates": {
+    "deduplication_applied": false,
+    "rows_before": 11055,
+    "exact_duplicates_detected": 5206,
+    "exact_duplicates_removed": 0,
+    "feature_vector_duplicates": 5270,
+    "duplicate_rate": 0.470918,
+    "rows_after": 11055,
+    "conflicting_feature_duplicates": 64
+  },
+  "final_shape": [
+    11055,
+    31
+  ],
+  "n_features": 30,
+  "phishing_rate": 0.44305744007236547,
+  "phishing_rate_before_dedup": 0.44305744007236547,
+  "published_phishing_rate": 0.443,
+  "phishing_count": 4898,
+  "legitimate_count": 6157
+}

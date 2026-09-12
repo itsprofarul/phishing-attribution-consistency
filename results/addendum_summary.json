@@ -1,0 +1,43 @@
+{
+  "results": {
+    "A4": {
+      "rows": 80,
+      "configs": [
+        "uci_full",
+        "uci_dedup",
+        "phiusiil_full",
+        "phiusiil_leakfree"
+      ]
+    },
+    "A5": {
+      "rows": 20,
+      "configs": [
+        "uci_full",
+        "uci_dedup",
+        "phiusiil_full",
+        "phiusiil_leakfree"
+      ]
+    }
+  },
+  "warnings": [
+    "WARNING  phase_a.evaluate: NOTE: uci_full ensemble accuracy 0.9730 is OUTSIDE the expected 0.95-0.97 band.",
+    "WARNING  phase_a.experiment_e2: [phiusiil_full] median cancellation ratio 0.090: mean signed SHAP is ~0 relative to mean |SHAP| for these features, so sign agreement computed on it measures noise. Direction-based agreement (Spearman corr of feature value with SHAP value) is 100.0%.",
+    "WARNING  phase_a.experiment_e2: [uci_dedup] median cancellation ratio 0.105: mean signed SHAP is ~0 relative to mean |SHAP| for these features, so sign agreement computed on it measures noise. Direction-based agreement (Spearman corr of feature value with SHAP value) is 100.0%.",
+    "WARNING  phase_a.experiment_e2: [uci_full] median cancellation ratio 0.105: mean signed SHAP is ~0 relative to mean |SHAP| for these features, so sign agreement computed on it measures noise. Direction-based agreement (Spearman corr of feature value with SHAP value) is 100.0%."
+  ],
+  "elapsed_seconds": 680.9,
+  "versions": {
+    "python": "3.13.5",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1",
+    "lightgbm": "4.7.0",
+    "shap": "0.52.0",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.1",
+    "seaborn": "0.13.2",
+    "pyarrow": "25.0.1",
+    "ucimlrepo": "<unavailable: module 'ucimlrepo' has no attribute '__version__'>"
+  }
+}

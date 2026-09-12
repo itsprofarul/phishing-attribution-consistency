@@ -1,0 +1,7 @@
+dataset,is_independent_benchmark,n_features_above_95,best_single_feature,best_single_feature_accuracy,verdict,full_model_accuracy,n_removed,final_accuracy,n_features,source,verdict_at_0.97,verdict_at_0.98,verdict_at_0.99,verdict_at_0.995,n_rows,phishing_rate,minimal_leaking_set,label_policy,is_primary
+phiusiil,True,3,URLSimilarityIndex,0.9967,repairable,1.0,14,0.989191182728588,50,phase_a,undetermined,undetermined,repairable,repairable,,,,,
+mendeley_hannousse,True,0,google_index,0.8548,clean,0.965598,0,0.965598,87,external_screen,,,,,11430.0,0.5,,merge_phishing,True
+mendeley_tan,True,0,PctExtHyperlinks,0.8887,clean,0.987333,0,0.987333,48,external_screen,,,,,10000.0,0.5,,merge_phishing,True
+uci,True,0,sslfinal_state,0.8736,,,0,,30,phase_a,,,,,,,,,
+uci379_website_phishing,True,0,SFH,0.8325,clean,0.906404,0,0.906404,9,external_screen,,,,,1353.0,0.595,,merge_phishing,True
+uci379_website_phishing__suspicious_dropped,False,0,SFH,0.8777,clean,0.920213,0,0.920213,9,external_screen,,,,,1250.0,0.5616,,drop,False

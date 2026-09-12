@@ -1,0 +1,61 @@
+[
+  {
+    "dataset": "uci379_website_phishing",
+    "dropped_columns": {},
+    "rows_before": 1353,
+    "label_note": "3-class Result (-1 phishy / 0 suspicious / 1 legitimate). Policy 'merge_phishing': suspicious folded into the phishing class, on the grounds that a defender's decision is act-or-don't-act and an intermediate verdict falls on the act side.",
+    "suspicious_policy": "merge_phishing",
+    "class_counts_before": {
+      "phishy(-1)": 702,
+      "suspicious(0)": 103,
+      "legitimate(1)": 548
+    },
+    "class_counts_after": {
+      "phishing(1)": 805,
+      "legitimate(0)": 548
+    },
+    "rows_after": 1353,
+    "n_features": 9,
+    "phishing_rate": 0.5949741315594974
+  },
+  {
+    "dataset": "uci379_website_phishing",
+    "dropped_columns": {},
+    "rows_before": 1353,
+    "dropped_rows_suspicious": 103,
+    "label_note": "3-class Result. Policy 'drop': the 103 suspicious rows are removed rather than assigned, as a sensitivity check against the primary 'merge_phishing' handling.",
+    "suspicious_policy": "drop",
+    "class_counts_before": {
+      "phishy(-1)": 702,
+      "suspicious(0)": 103,
+      "legitimate(1)": 548
+    },
+    "class_counts_after": {
+      "phishing(1)": 702,
+      "legitimate(0)": 548
+    },
+    "rows_after": 1250,
+    "n_features": 9,
+    "phishing_rate": 0.5616
+  },
+  {
+    "dataset": "mendeley_hannousse",
+    "dropped_columns": {
+      "url": "raw URL string identifier, not a feature"
+    },
+    "rows_before": 11430,
+    "label_note": "status in {phishing, legitimate}",
+    "rows_after": 11430,
+    "n_features": 87,
+    "phishing_rate": 0.5
+  },
+  {
+    "dataset": "mendeley_tan",
+    "dropped_columns": {},
+    "rows_before": 10000,
+    "label_note": "CLASS_LABEL 1 = phishing, 0 = legitimate",
+    "rows_after": 10000,
+    "n_features": 48,
+    "phishing_rate": 0.5
+  }
+]

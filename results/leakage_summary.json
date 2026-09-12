@@ -1,0 +1,40 @@
+{
+  "seed": 42,
+  "threshold": 0.95,
+  "targeted": {
+    "phiusiil": {
+      "accuracy": 0.9967374960991802,
+      "precision": 1.0,
+      "recall": 0.9923440516610079,
+      "f1": 0.9961573161359307,
+      "mutual_information": 0.6626461937741123,
+      "dataset": "phiusiil",
+      "feature": "URLSimilarityIndex",
+      "seed": 42.0
+    }
+  },
+  "flagged_features": [
+    {
+      "dataset": "phiusiil",
+      "feature": "URLSimilarityIndex",
+      "accuracy": 0.9967374960991802,
+      "f1": 0.9961573161359307,
+      "mutual_information": 0.662215786810744
+    },
+    {
+      "dataset": "phiusiil",
+      "feature": "NoOfExternalRef",
+      "accuracy": 0.9611336491815371,
+      "f1": 0.9551613536689141,
+      "mutual_information": 0.5654485944505745
+    },
+    {
+      "dataset": "phiusiil",
+      "feature": "LineOfCode",
+      "accuracy": 0.9609350619875742,
+      "f1": 0.9536066844109026,
+      "mutual_information": 0.595168316462994
+    }
+  ],
+  "n_flagged": 3
+}

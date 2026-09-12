@@ -1,0 +1,51 @@
+{
+  "rf": {
+    "n_estimators": 100,
+    "min_samples_split": 5,
+    "max_features": "log2",
+    "max_depth": null
+  },
+  "_meta": {
+    "rf": {
+      "best_cv_f1": 0.9512817450389466,
+      "wall_clock_seconds": 74.5,
+      "n_iter": 50,
+      "cv_folds": 5,
+      "scoring": "f1",
+      "tuning_seed": 42,
+      "n_train_rows": 4093
+    },
+    "xgb": {
+      "best_cv_f1": 0.9522967142534761,
+      "wall_clock_seconds": 34.85,
+      "n_iter": 50,
+      "cv_folds": 5,
+      "scoring": "f1",
+      "tuning_seed": 42,
+      "n_train_rows": 4093
+    },
+    "lgbm": {
+      "best_cv_f1": 0.9515467374529016,
+      "wall_clock_seconds": 57.4,
+      "n_iter": 50,
+      "cv_folds": 5,
+      "scoring": "f1",
+      "tuning_seed": 42,
+      "n_train_rows": 4093
+    },
+    "_provenance": "copied from best_params_uci.json: config 'uci_dedup' trains on exactly the data the Phase A 'uci' search used (same de-duplication policy, same feature set), so the search result carries over unchanged."
+  },
+  "xgb": {
+    "subsample": 0.8,
+    "n_estimators": 300,
+    "max_depth": 6,
+    "learning_rate": 0.1,
+    "colsample_bytree": 0.8
+  },
+  "lgbm": {
+    "num_leaves": 31,
+    "n_estimators": 500,
+    "min_child_samples": 20,
+    "learning_rate": 0.05
+  }
+}

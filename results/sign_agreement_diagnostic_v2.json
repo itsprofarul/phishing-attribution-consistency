@@ -1,0 +1,34 @@
+{
+  "phiusiil_full": {
+    "sign_agreement_top10": 41.222222222222214,
+    "sign_agreement_unfiltered": 43.6,
+    "thresholding_raised_the_metric": false,
+    "direction_based_top10": 100.0,
+    "median_cancellation_ratio": 0.08966720007006332,
+    "verdict": "A2's premise does NOT hold here: thresholding LOWERS the metric. Mean signed SHAP cancels for the important features (median |mean signed| / mean |SHAP| = 0.090), so their sign is noise regardless of importance. The direction-based supplement is the trustworthy figure."
+  },
+  "phiusiil_leakfree": {
+    "sign_agreement_top10": 51.333333333333336,
+    "sign_agreement_unfiltered": 48.88888888888889,
+    "thresholding_raised_the_metric": true,
+    "direction_based_top10": 100.0,
+    "median_cancellation_ratio": 0.09639910404798085,
+    "verdict": "A2's premise holds: thresholding raises the metric."
+  },
+  "uci_dedup": {
+    "sign_agreement_top10": 44.44444444444444,
+    "sign_agreement_unfiltered": 50.66666666666667,
+    "thresholding_raised_the_metric": false,
+    "direction_based_top10": 100.0,
+    "median_cancellation_ratio": 0.10535074404159646,
+    "verdict": "A2's premise does NOT hold here: thresholding LOWERS the metric. Mean signed SHAP cancels for the important features (median |mean signed| / mean |SHAP| = 0.105), so their sign is noise regardless of importance. The direction-based supplement is the trustworthy figure."
+  },
+  "uci_full": {
+    "sign_agreement_top10": 44.0,
+    "sign_agreement_unfiltered": 46.0,
+    "thresholding_raised_the_metric": false,
+    "direction_based_top10": 100.0,
+    "median_cancellation_ratio": 0.10520739503320911,
+    "verdict": "A2's premise does NOT hold here: thresholding LOWERS the metric. Mean signed SHAP cancels for the important features (median |mean signed| / mean |SHAP| = 0.105), so their sign is noise regardless of importance. The direction-based supplement is the trustworthy figure."
+  }
+}

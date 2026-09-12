@@ -1,0 +1,18 @@
+{
+  "question": "Why does E2 sign agreement sit at ~50% (chance) on the UCI dataset, while Kendall's tau is a healthy ~0.77?",
+  "answer": "Because mean SIGNED SHAP is a near-zero, noise-dominated statistic. Each feature pushes some instances towards phishing and others towards legitimate; averaging over a class-balanced sample makes those contributions cancel. What survives is a small residual whose SIGN is essentially arbitrary, so two independently trained models agree on it at chance rate. This is a property of the statistic as specified, NOT a defect in the metric implementation - which is verified against identical, reversed and random inputs in tests/test_consistency.py.",
+  "evidence_uci_seed42": {
+    "median_ratio_abs_mean_signed_over_mean_abs": {"half_A": 0.1322, "half_B": 0.0741},
+    "features_whose_signed_mean_is_under_10pct_of_magnitude": {"half_A": "12/30", "half_B": "17/30"},
+    "worked_example_url_of_anchor": {
+      "mean_abs_shap_half_A": 0.161909,
+      "mean_signed_shap_half_A": -0.007723,
+      "mean_signed_shap_half_B": 0.002807,
+      "comment": "The strongest feature by magnitude has a signed mean that is roughly 5% (half A) and 2% (half B) of that magnitude, and the two halves disagree on its sign. Magnitude is stable; direction-of-the-mean is not."
+    },
+    "sign_agreement_all_30_features": 50.0,
+    "sign_agreement_restricted_to_8_features_with_ratio_above_0.1": 37.5
+  },
+  "implication_for_the_paper": "Kendall's tau and Jaccard operate on mean |SHAP| and are stable and interpretable. Sign agreement, computed on mean signed SHAP as the Phase A specification defines it, should NOT be read as 'the two models disagree about feature direction'. It should be reported with the cancellation caveat, or Phase B should adopt a direction statistic that does not average away its own signal - for example the sign of the correlation between a feature's value and its SHAP value, which answers the question ('does a higher value of this feature push the prediction towards phishing?') that readers actually have in mind.",
+  "action_taken": "None. The metric is implemented exactly as specified and nothing was silently changed. This file records the finding so the choice is made deliberately in Phase B."
+}

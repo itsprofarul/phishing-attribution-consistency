@@ -1,0 +1,24 @@
+# Phase A - pinned exactly. SHAP output varies across library versions, so an
+# unpinned install can silently change the paper's numbers.
+# Resolved and verified on Python 3.13.5 (Windows, CPU only).
+
+ucimlrepo==0.0.7
+pandas==3.0.5
+numpy==2.5.3
+scikit-learn==1.9.0
+xgboost==3.4.1
+lightgbm==4.7.0
+shap==0.52.0
+scipy==1.18.1
+matplotlib==3.11.1
+seaborn==0.13.2
+pyarrow==25.0.1
+pytest==9.1.1
+
+# Transitive pins that affect numerics or SHAP internals directly.
+joblib==1.6.0
+numba==0.67.0
+llvmlite==0.49.0
+slicer==0.0.8
+cloudpickle==3.1.2
+threadpoolctl==3.6.0

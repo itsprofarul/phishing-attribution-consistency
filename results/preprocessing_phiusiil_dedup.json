@@ -1,0 +1,30 @@
+{
+  "dataset": "phiusiil",
+  "deduplicated": true,
+  "dropped_columns": [
+    "URL",
+    "Domain",
+    "TLD",
+    "Title"
+  ],
+  "duplicates": {
+    "deduplication_applied": true,
+    "rows_before": 235795,
+    "exact_duplicates_detected": 808,
+    "exact_duplicates_removed": 808,
+    "feature_vector_duplicates": 808,
+    "duplicate_rate": 0.003427,
+    "rows_after": 234987,
+    "conflicting_feature_duplicates": 0
+  },
+  "final_shape": [
+    234987,
+    51
+  ],
+  "n_features": 50,
+  "phishing_rate": 0.42613846723435767,
+  "phishing_rate_before_dedup": 0.42810492164804176,
+  "published_phishing_rate": 0.4281,
+  "phishing_count": 100137,
+  "legitimate_count": 134850
+}

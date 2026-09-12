@@ -1,0 +1,38 @@
+{
+  "n_eligible": 13,
+  "n_excluded_contended": 2,
+  "eligible_iterations": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    14
+  ],
+  "shap_seconds_min": 284.19,
+  "shap_seconds_max": 2022.1,
+  "fold_increase_clean_only": 7.115310179809282,
+  "fold_increase_full_range_LOWER_BOUND": 7.115310179809282,
+  "full_range_note": "The full-range figure spans contended iterations and is therefore a LOWER BOUND, not a measurement: contention inflates wall-clock, so the excluded early timings are upper bounds on their clean values and the true increase is at least this large. Quote it as '>=Nx' or re-measure those iterations without competing load.",
+  "monotonic": false,
+  "n_decreasing_steps": 3,
+  "n_steps": 12,
+  "plateau_detected": false,
+  "plateau_tail_relative_spread": 0.3748,
+  "fit_seconds_min": 20.46,
+  "fit_seconds_max": 33.0,
+  "caption": "TreeSHAP cost rises ~7.1x across the clean iterations (284s to 2022s) with local variation, falling back on 3 of 12 steps. Ensemble fit time stays flat throughout (20-33s), so the growth is specific to explanation, not to training.",
+  "forbidden_descriptions": [
+    "steady growth",
+    "monotonic increase",
+    "steadily increasing",
+    "consistent growth"
+  ]
+}

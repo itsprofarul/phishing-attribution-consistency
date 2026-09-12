@@ -1,0 +1,32 @@
+[
+  {
+    "dataset": "phiusiil",
+    "uci_variables_rows": 56,
+    "columns_in_download": 55,
+    "features_delivered": 54,
+    "columns_not_delivered": 1,
+    "identifier_columns_specified": 5,
+    "identifier_columns_actually_present": 4,
+    "identifier_columns_absent": [
+      "FILENAME"
+    ],
+    "columns_dropped": 4,
+    "features_retained": 50,
+    "deduplicated": true,
+    "rows_retained": 234987
+  },
+  {
+    "dataset": "uci",
+    "uci_variables_rows": 31,
+    "columns_in_download": 31,
+    "features_delivered": 30,
+    "columns_not_delivered": 0,
+    "identifier_columns_specified": 0,
+    "identifier_columns_actually_present": 0,
+    "identifier_columns_absent": [],
+    "columns_dropped": 0,
+    "features_retained": 30,
+    "deduplicated": false,
+    "rows_retained": 11055
+  }
+]

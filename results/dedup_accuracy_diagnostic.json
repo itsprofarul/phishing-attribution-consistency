@@ -1,0 +1,25 @@
+{
+  "question": "Why is UCI test accuracy ~0.958 rather than the ~0.97-0.99 reported in published work?",
+  "answer": "Published figures are computed WITHOUT removing duplicate rows. 5,206 of the 11,055 UCI rows are exact duplicates, so when duplicates are retained a large majority of test rows also appear in the training set. The model can memorise them, which inflates apparent accuracy. De-duplication removes that contamination.",
+  "evidence": {
+    "with_duplicates_as_published": {
+      "n_rows": 11055,
+      "test_accuracy": 0.9771,
+      "test_f1": 0.9740,
+      "test_rows_with_exact_train_twin": 1121,
+      "test_rows_total": 1659,
+      "pct_test_rows_seen_in_training": 67.6
+    },
+    "deduplicated_this_pipeline": {
+      "n_rows": 5849,
+      "test_accuracy": 0.9579,
+      "test_f1": 0.9588,
+      "test_rows_with_exact_train_twin": 20,
+      "test_rows_total": 878,
+      "pct_test_rows_seen_in_training": 2.3
+    }
+  },
+  "method": "Soft-voting ensemble with the tuned UCI hyperparameters, single stratified 85/15 split, seed 42, identical in both arms; the only difference is whether exact duplicate rows were removed before splitting.",
+  "conclusion": "The lower accuracy is CORRECT and is the honest estimate. It is not a bug upstream. Task 2.3 de-duplication is doing real work: it eliminates train/test contamination that accounts for roughly two accuracy points on this dataset. The de-duplicated figure is the one that should be reported, with this comparison cited as justification.",
+  "caveat": "De-duplication also shifts the UCI class balance from 44.31% phishing (matching the published figure) to 51.62%, because duplicated rows are not distributed evenly across classes. Both figures are recorded in results/preprocessing_uci.json."
+}

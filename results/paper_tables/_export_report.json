@@ -1,0 +1,16 @@
+{
+  "missing_tables": {},
+  "figures": {
+    "made": {
+      "f1_audit_pipeline": "hand-drawn (left untouched)",
+      "f2_single_feature_power": "ok",
+      "f4_progressive_removal": "ok",
+      "f3_leak_distributions": "ok",
+      "f5_transfer_matrix": "ok",
+      "f6_within_vs_cross": "ok",
+      "f7_group_shap_mass": "ok",
+      "f8_explanation_cost_curve": "ok"
+    },
+    "skipped": {}
+  }
+}

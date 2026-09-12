@@ -1,0 +1,29 @@
+{
+  "finding": "PhiUSIIL's URLSimilarityIndex is not merely a strong predictor - it is a label artifact. The feature is CONSTANT on the legitimate class.",
+  "quantification": {
+    "legitimate_rows": 134850,
+    "legitimate_rows_equal_to_100": "100.0000%",
+    "legitimate_distinct_values": 1,
+    "legitimate_min": 100.0,
+    "legitimate_max": 100.0,
+    "phishing_rows": 100137,
+    "phishing_rows_equal_to_100": "0.7849%",
+    "phishing_min": 0.1556,
+    "phishing_max": 100.0
+  },
+  "single_rule_performance": {
+    "rule": "URLSimilarityIndex < 100  =>  predict phishing",
+    "accuracy_on_all_234987_deduplicated_rows": 0.996655,
+    "total_errors": 786,
+    "errors_that_are_phishing_rows_sitting_at_exactly_100": 786,
+    "comment": "Every single error is a phishing row that happens to take the legitimate-class constant. There are no legitimate rows below 100 at all."
+  },
+  "reproduce": "from src.preprocessing import get_xy; X,y = get_xy('phiusiil'); u = X['URLSimilarityIndex']; assert (u[y==0] == 100).all(); ((u < 100).astype(int) == y).mean()",
+  "why_this_matters": [
+    "The reported ~99-100% accuracy on PhiUSIIL measures the presence of this artifact, not phishing detection. E1 returns accuracy 0.99999 +/- 0.00001 for all four models, and all three tuned learners converge to an identical CV F1 of 0.9999857 - the signature of a saturated, trivially separable target.",
+    "SHAP rankings on PhiUSIIL are anchored by this feature: URLSimilarityIndex is the top-ranked feature in every half, every seed, and at every convergence sample size.",
+    "This inflates the E2 within-dataset consistency baseline. PhiUSIIL's tau of 0.9190 is high partly because one deterministic feature pins the top of the ranking in both halves, whereas the UCI dataset (no such feature; best single-feature accuracy 0.8736) yields tau 0.7683. The within-dataset ceiling is therefore dataset-dependent and cannot be assumed to be a single constant in Phase B.",
+    "Any cross-dataset SHAP comparison in Phase B compares a near-deterministic attribution profile against a genuinely contested one. A with/without-URLSimilarityIndex variant is strongly advised so the comparison is not dominated by this artifact."
+  ],
+  "action_taken": "None - nothing was dropped, per the Task 3 instruction to report rather than silently fix. This file records the evidence so the with/without decision is made explicitly."
+}

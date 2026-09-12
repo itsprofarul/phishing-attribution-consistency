@@ -1,0 +1,433 @@
+{
+  "datasets": [
+    "phiusiil",
+    "uci"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "class_balance": {
+    "phiusiil": {
+      "shape": [
+        234987,
+        51
+      ],
+      "n_features": 50,
+      "phishing_rate": 0.42613846723435767,
+      "phishing_rate_before_dedup": 0.42810492164804176,
+      "published_phishing_rate": 0.4281,
+      "duplicates_removed": 808,
+      "rows_before": 235795,
+      "dropped_columns": [
+        "URL",
+        "Domain",
+        "TLD",
+        "Title"
+      ]
+    },
+    "uci": {
+      "shape": [
+        5849,
+        31
+      ],
+      "n_features": 30,
+      "phishing_rate": 0.5161566079671739,
+      "phishing_rate_before_dedup": 0.44305744007236547,
+      "published_phishing_rate": 0.443,
+      "duplicates_removed": 5206,
+      "rows_before": 11055,
+      "dropped_columns": []
+    }
+  },
+  "leakage": {
+    "seed": 42,
+    "threshold": 0.95,
+    "targeted": {
+      "phiusiil": {
+        "accuracy": 0.9967374960991802,
+        "precision": 1.0,
+        "recall": 0.9923440516610079,
+        "f1": 0.9961573161359307,
+        "mutual_information": 0.6626461937741123,
+        "dataset": "phiusiil",
+        "feature": "URLSimilarityIndex",
+        "seed": 42.0
+      }
+    },
+    "flagged_features": [
+      {
+        "dataset": "phiusiil",
+        "feature": "URLSimilarityIndex",
+        "accuracy": 0.9967374960991802,
+        "f1": 0.9961573161359307,
+        "mutual_information": 0.662215786810744
+      },
+      {
+        "dataset": "phiusiil",
+        "feature": "NoOfExternalRef",
+        "accuracy": 0.9611336491815371,
+        "f1": 0.9551613536689141,
+        "mutual_information": 0.5654485944505745
+      },
+      {
+        "dataset": "phiusiil",
+        "feature": "LineOfCode",
+        "accuracy": 0.9609350619875742,
+        "f1": 0.9536066844109026,
+        "mutual_information": 0.595168316462994
+      }
+    ],
+    "n_flagged": 3
+  },
+  "best_params": {
+    "phiusiil": {
+      "rf": {
+        "n_estimators": 500,
+        "min_samples_split": 10,
+        "max_features": "sqrt",
+        "max_depth": null
+      },
+      "xgb": {
+        "subsample": 0.8,
+        "n_estimators": 500,
+        "max_depth": 6,
+        "learning_rate": 0.01,
+        "colsample_bytree": 0.8
+      },
+      "lgbm": {
+        "num_leaves": 63,
+        "n_estimators": 100,
+        "min_child_samples": 20,
+        "learning_rate": 0.05
+      }
+    },
+    "uci": {
+      "rf": {
+        "n_estimators": 100,
+        "min_samples_split": 5,
+        "max_features": "log2",
+        "max_depth": null
+      },
+      "xgb": {
+        "subsample": 0.8,
+        "n_estimators": 300,
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "colsample_bytree": 0.8
+      },
+      "lgbm": {
+        "num_leaves": 31,
+        "n_estimators": 500,
+        "min_child_samples": 20,
+        "learning_rate": 0.05
+      }
+    }
+  },
+  "e1_summary": [
+    {
+      "dataset": "phiusiil",
+      "model": "rf",
+      "accuracy_mean": 0.99999,
+      "accuracy_std": 1e-05,
+      "precision_mean": 1.0,
+      "precision_std": 0.0,
+      "recall_mean": 0.99999,
+      "recall_std": 3e-05,
+      "f1_mean": 0.99999,
+      "f1_std": 1e-05,
+      "mcc_mean": 0.99999,
+      "mcc_std": 3e-05,
+      "roc_auc_mean": 1.0,
+      "roc_auc_std": 0.0
+    },
+    {
+      "dataset": "phiusiil",
+      "model": "xgb",
+      "accuracy_mean": 0.99999,
+      "accuracy_std": 1e-05,
+      "precision_mean": 1.0,
+      "precision_std": 0.0,
+      "recall_mean": 0.99999,
+      "recall_std": 3e-05,
+      "f1_mean": 0.99999,
+      "f1_std": 1e-05,
+      "mcc_mean": 0.99999,
+      "mcc_std": 3e-05,
+      "roc_auc_mean": 1.0,
+      "roc_auc_std": 0.0
+    },
+    {
+      "dataset": "phiusiil",
+      "model": "lgbm",
+      "accuracy_mean": 0.99999,
+      "accuracy_std": 1e-05,
+      "precision_mean": 1.0,
+      "precision_std": 0.0,
+      "recall_mean": 0.99999,
+      "recall_std": 3e-05,
+      "f1_mean": 0.99999,
+      "f1_std": 1e-05,
+      "mcc_mean": 0.99999,
+      "mcc_std": 3e-05,
+      "roc_auc_mean": 1.0,
+      "roc_auc_std": 0.0
+    },
+    {
+      "dataset": "phiusiil",
+      "model": "ensemble",
+      "accuracy_mean": 0.99999,
+      "accuracy_std": 1e-05,
+      "precision_mean": 1.0,
+      "precision_std": 0.0,
+      "recall_mean": 0.99999,
+      "recall_std": 3e-05,
+      "f1_mean": 0.99999,
+      "f1_std": 1e-05,
+      "mcc_mean": 0.99999,
+      "mcc_std": 3e-05,
+      "roc_auc_mean": 1.0,
+      "roc_auc_std": 0.0
+    },
+    {
+      "dataset": "uci",
+      "model": "rf",
+      "accuracy_mean": 0.94966,
+      "accuracy_std": 0.00549,
+      "precision_mean": 0.95667,
+      "precision_std": 0.0031,
+      "recall_mean": 0.94525,
+      "recall_std": 0.01151,
+      "f1_mean": 0.9509,
+      "f1_std": 0.00561,
+      "mcc_mean": 0.89939,
+      "mcc_std": 0.01084,
+      "roc_auc_mean": 0.9902,
+      "roc_auc_std": 0.00211
+    },
+    {
+      "dataset": "uci",
+      "model": "xgb",
+      "accuracy_mean": 0.95239,
+      "accuracy_std": 0.00465,
+      "precision_mean": 0.95736,
+      "precision_std": 0.00744,
+      "recall_mean": 0.95011,
+      "recall_std": 0.00877,
+      "f1_mean": 0.95368,
+      "f1_std": 0.0046,
+      "mcc_mean": 0.90481,
+      "mcc_std": 0.0093,
+      "roc_auc_mean": 0.99244,
+      "roc_auc_std": 0.0017
+    },
+    {
+      "dataset": "uci",
+      "model": "lgbm",
+      "accuracy_mean": 0.95034,
+      "accuracy_std": 0.00308,
+      "precision_mean": 0.9524,
+      "precision_std": 0.0088,
+      "recall_mean": 0.95143,
+      "recall_std": 0.01012,
+      "f1_mean": 0.95185,
+      "f1_std": 0.00304,
+      "mcc_mean": 0.90072,
+      "mcc_std": 0.00616,
+      "roc_auc_mean": 0.99211,
+      "roc_auc_std": 0.00184
+    },
+    {
+      "dataset": "uci",
+      "model": "ensemble",
+      "accuracy_mean": 0.9533,
+      "accuracy_std": 0.00351,
+      "precision_mean": 0.95582,
+      "precision_std": 0.00723,
+      "recall_mean": 0.95364,
+      "recall_std": 0.00698,
+      "f1_mean": 0.9547,
+      "f1_std": 0.00336,
+      "mcc_mean": 0.90659,
+      "mcc_std": 0.00699,
+      "roc_auc_mean": 0.99243,
+      "roc_auc_std": 0.00127
+    }
+  ],
+  "convergence": [
+    {
+      "dataset": "phiusiil",
+      "model": "ensemble",
+      "seed": 42,
+      "size_a": 5000,
+      "size_b": 10000,
+      "effective_a": 5000,
+      "effective_b": 10000,
+      "kendall_tau": 0.9983673469387755,
+      "p_value": 3.287949416633158e-63,
+      "n_available": 35249,
+      "degenerate": false
+    },
+    {
+      "dataset": "phiusiil",
+      "model": "ensemble",
+      "seed": 42,
+      "size_a": 10000,
+      "size_b": 20000,
+      "effective_a": 10000,
+      "effective_b": 20000,
+      "kendall_tau": 0.996734693877551,
+      "p_value": 1.7254225571447655e-24,
+      "n_available": 35249,
+      "degenerate": false
+    },
+    {
+      "dataset": "uci",
+      "model": "ensemble",
+      "seed": 42,
+      "size_a": 219,
+      "size_b": 439,
+      "effective_a": 219,
+      "effective_b": 439,
+      "kendall_tau": 0.9310344827586208,
+      "p_value": 1.4644994032375224e-21,
+      "n_available": 878,
+      "degenerate": false
+    },
+    {
+      "dataset": "uci",
+      "model": "ensemble",
+      "seed": 42,
+      "size_a": 439,
+      "size_b": 878,
+      "effective_a": 439,
+      "effective_b": 878,
+      "kendall_tau": 0.9770114942528735,
+      "p_value": 2.0569127902572158e-27,
+      "n_available": 878,
+      "degenerate": false
+    },
+    {
+      "dataset": "uci",
+      "model": "ensemble",
+      "seed": 42,
+      "size_a": 878,
+      "size_b": 5000,
+      "effective_a": 878,
+      "effective_b": 878,
+      "kendall_tau": 1.0,
+      "p_value": 7.539975257631811e-33,
+      "n_available": 878,
+      "degenerate": true
+    },
+    {
+      "dataset": "uci",
+      "model": "ensemble",
+      "seed": 42,
+      "size_a": 5000,
+      "size_b": 10000,
+      "effective_a": 878,
+      "effective_b": 878,
+      "kendall_tau": 1.0,
+      "p_value": 7.539975257631811e-33,
+      "n_available": 878,
+      "degenerate": true
+    },
+    {
+      "dataset": "uci",
+      "model": "ensemble",
+      "seed": 42,
+      "size_a": 10000,
+      "size_b": 20000,
+      "effective_a": 878,
+      "effective_b": 878,
+      "kendall_tau": 1.0,
+      "p_value": 7.539975257631811e-33,
+      "n_available": 878,
+      "degenerate": true
+    }
+  ],
+  "e2_summary": [
+    {
+      "dataset": "phiusiil",
+      "n_seeds": 5,
+      "kendall_tau_mean": 0.9190204081632654,
+      "kendall_tau_std": 0.01753107552071327,
+      "kendall_tau_ci_lower": 0.9053061224489797,
+      "kendall_tau_ci_upper": 0.9327346938775511,
+      "jaccard_5_mean": 0.9333333333333332,
+      "jaccard_5_std": 0.149071198499986,
+      "jaccard_5_ci_lower": 0.7999999999999999,
+      "jaccard_5_ci_upper": 1.0,
+      "jaccard_10_mean": 0.8606060606060606,
+      "jaccard_10_std": 0.1414862730900455,
+      "jaccard_10_ci_lower": 0.7575757575757576,
+      "jaccard_10_ci_upper": 0.9636363636363636,
+      "jaccard_15_mean": 0.8529411764705882,
+      "jaccard_15_std": 0.04932502891543657,
+      "jaccard_15_ci_lower": 0.8088235294117647,
+      "jaccard_15_ci_upper": 0.875,
+      "sign_agreement_mean": 43.6,
+      "sign_agreement_std": 11.260550608207398,
+      "sign_agreement_ci_lower": 36.0,
+      "sign_agreement_ci_upper": 53.2
+    },
+    {
+      "dataset": "uci",
+      "n_seeds": 5,
+      "kendall_tau_mean": 0.7682758620689655,
+      "kendall_tau_std": 0.01154013829702171,
+      "kendall_tau_ci_lower": 0.759080459770115,
+      "kendall_tau_ci_upper": 0.7765747126436782,
+      "jaccard_5_mean": 0.6666666666666666,
+      "jaccard_5_std": 0.0,
+      "jaccard_5_ci_lower": 0.6666666666666666,
+      "jaccard_5_ci_upper": 0.6666666666666666,
+      "jaccard_10_mean": 0.8181818181818181,
+      "jaccard_10_std": 1.2412670766236366e-16,
+      "jaccard_10_ci_lower": 0.8181818181818181,
+      "jaccard_10_ci_upper": 0.8181818181818181,
+      "jaccard_15_mean": 0.7892156862745098,
+      "jaccard_15_std": 0.08794546626475078,
+      "jaccard_15_ci_lower": 0.7254901960784312,
+      "jaccard_15_ci_upper": 0.8529411764705882,
+      "sign_agreement_mean": 50.66666666666667,
+      "sign_agreement_std": 4.944132324730441,
+      "sign_agreement_ci_lower": 46.66666666666667,
+      "sign_agreement_ci_upper": 54.0
+    }
+  ],
+  "wall_clock_seconds": 405.45,
+  "failures": [],
+  "warnings": [
+    "WARNING  phase_a.leakage_check: ******************************************************************************",
+    "WARNING  phase_a.leakage_check: LEAKAGE WARNING: 3 feature(s) exceed 0.95 single-feature test accuracy.",
+    "WARNING  phase_a.leakage_check: A depth-3 tree on ONE of these columns nearly reproduces the label,",
+    "WARNING  phase_a.leakage_check: so headline ensemble accuracy is not evidence of phishing detection",
+    "WARNING  phase_a.leakage_check: and SHAP rankings will be dominated by these features.",
+    "WARNING  phase_a.leakage_check:     phiusiil   URLSimilarityIndex             acc=0.9967  f1=0.9962  mi=0.6622",
+    "WARNING  phase_a.leakage_check:     phiusiil   NoOfExternalRef                acc=0.9611  f1=0.9552  mi=0.5654",
+    "WARNING  phase_a.leakage_check:     phiusiil   LineOfCode                     acc=0.9609  f1=0.9536  mi=0.5952",
+    "WARNING  phase_a.leakage_check: NOTHING HAS BEEN DROPPED. Whether the main analysis needs a",
+    "WARNING  phase_a.leakage_check: with/without variant is a reporting decision, not a silent fix.",
+    "WARNING  phase_a.shap_utils: [uci] explanation pool holds only 878 instances, so the requested ladder [5000, 10000, 20000] cannot be run in full. Adding an adaptive ladder [219, 439, 878].",
+    "WARNING  phase_a.shap_utils: NOT EVALUABLE for uci/ensemble: the 10k and 20k points both clamp to the 878 available instances, so tau = 1.0000 is 1.0 by construction and says nothing about convergence. Use the adaptive ladder rows instead."
+  ],
+  "library_versions": {
+    "python": "3.13.5",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1",
+    "lightgbm": "4.7.0",
+    "shap": "0.52.0",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.1",
+    "seaborn": "0.13.2",
+    "pyarrow": "25.0.1",
+    "ucimlrepo": "<unavailable: module 'ucimlrepo' has no attribute '__version__'>"
+  }
+}

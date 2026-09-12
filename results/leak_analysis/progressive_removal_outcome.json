@@ -1,0 +1,29 @@
+{
+  "dataset": "phiusiil",
+  "seed": 42,
+  "outcome": "deleaked",
+  "removed_features": [
+    "URLSimilarityIndex",
+    "LineOfCode",
+    "IsHTTPS",
+    "NoOfSelfRef",
+    "NoOfExternalRef",
+    "NoOfImage",
+    "HasSocialNet",
+    "NoOfJS",
+    "NoOfCSS",
+    "LargestLineLength",
+    "LetterRatioInURL",
+    "NoOfOtherSpecialCharsInURL",
+    "NoOfLettersInURL",
+    "HasCopyrightInfo"
+  ],
+  "n_removed": 14,
+  "final_accuracy": 0.9891911827285881,
+  "final_f1": 0.9873055009495885,
+  "final_mcc": 0.9778960075454447,
+  "n_features_remaining": 36,
+  "acc_target": 0.99,
+  "max_removed": 15,
+  "greedy_shap_sample": 2000
+}

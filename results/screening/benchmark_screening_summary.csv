@@ -1,0 +1,5 @@
+dataset,n_rows,n_features,phishing_rate,best_single_feature,best_single_feature_accuracy,n_features_above_95,full_model_accuracy,n_removed,final_accuracy,minimal_leaking_set,verdict,label_policy,is_primary
+uci379_website_phishing,1353,9,0.595,SFH,0.8325,0,0.906404,0,0.906404,,clean,merge_phishing,True
+uci379_website_phishing__suspicious_dropped,1250,9,0.5616,SFH,0.8777,0,0.920213,0,0.920213,,clean,drop,False
+mendeley_hannousse,11430,87,0.5,google_index,0.8548,0,0.965598,0,0.965598,,clean,merge_phishing,True
+mendeley_tan,10000,48,0.5,PctExtHyperlinks,0.8887,0,0.987333,0,0.987333,,clean,merge_phishing,True

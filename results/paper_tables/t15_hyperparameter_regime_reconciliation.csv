@@ -1,0 +1,2 @@
+feature_set,accuracy_static_regime,accuracy_retuned_regime,difference,static_source,retuned_source,crosses_0.99_threshold,note
+phiusiil leak-free (36 features),0.989191,0.992709,0.003518,t4 / A1.3 progressive removal (final iteration),"t5 / E1 v2 (phiusiil_leakfree, mean over 5 seeds)",True,"Same 36 features, same data, different hyperparameters. The removal curve reuses parameters tuned on the full 50-feature set; E1 re-tunes. The gap moves the figure across the 0.99 verdict line, so the de-leak verdict is hyperparameter-sensitive and must not be quoted without its regime."

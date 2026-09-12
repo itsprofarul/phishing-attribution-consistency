@@ -1,0 +1,10 @@
+concept,status,reason,rho_uci,rho_phiusiil,polarity_status
+ip_in_domain,retained_after_deleaking,,-0.0941600949562038,-0.0605489999124573,agrees
+url_length,retained_after_deleaking,,-0.0533315794339325,-0.3539937654486287,agrees
+subdomain_depth,retained_after_deleaking,,-0.3046922676521399,-0.1141491829083289,agrees
+iframe,retained_after_deleaking,,0.0033935238644643,0.521331928092635,NO_SIGNAL_UCI
+popup,retained_after_deleaking,,-8.588679256217027e-05,0.1925460026806499,NO_SIGNAL_UCI
+url_redirect,retained_after_deleaking,,0.0201134616575737,0.0480143528227923,agrees
+form_handler,retained_after_deleaking,,-0.2191900653063038,0.1673089014798561,INVERTED
+ssl_state,LOST_to_deleaking,source feature(s) removed by de-leaking: ['IsHTTPS'],-0.735813975062039,-0.6124154229775562,agrees
+anchor_external_ratio,LOST_to_deleaking,"source feature(s) removed by de-leaking: ['NoOfExternalRef', 'NoOfSelfRef']",-0.7012072591666815,0.0872798521005418,INVERTED
