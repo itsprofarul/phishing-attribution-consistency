@@ -69,9 +69,15 @@ def scrub(text, where: str) -> str:
 
 
 def scrub_frame(df: pd.DataFrame, where: str) -> pd.DataFrame:
+    """Check column names and every non-numeric cell value.
+
+    Tested on dtype rather than `== object`: pandas reads these CSVs into
+    PyArrow-backed string columns, which are not object dtype, so an object
+    test silently skips exactly the cells most likely to carry a name or path.
+    """
     for col in df.columns:
         scrub(col, f"{where} column name")
-        if df[col].dtype == object:
+        if not pd.api.types.is_numeric_dtype(df[col]):
             for v in df[col].dropna().unique():
                 scrub(v, f"{where} [{col}]")
     return df
@@ -118,6 +124,24 @@ EXCLUDED_TABLES = {"t1", "t2", "t5", "t8", "t9", "t10", "t15"}
 RECORD_WISE_TABLES = {"t6", "t7", "t12", "t16"}
 # At or below this many columns a table is rendered as a table, always.
 MAX_COLS_TABULAR = 8
+
+# Display names for dataset identifier cells in ESM_3, matching the figures.
+# The pipeline spells the unrestricted variants phiusiil_full and uci_full in
+# some tables and phiusiil and uci in others; both resolve to the same dataset
+# and so to the same display name.
+DATASET_DISPLAY = {
+    "phiusiil": "PhiUSIIL",
+    "phiusiil_full": "PhiUSIIL",
+    "phiusiil_leakfree": "PhiUSIIL (leak-controlled)",
+    "uci": "UCI Phishing Websites",
+    "uci_full": "UCI Phishing Websites",
+    "uci_dedup": "UCI Phishing Websites (de-duplicated)",
+    "uci379_website_phishing": "UCI Website Phishing",
+    "uci379_website_phishing__suspicious_dropped": "UCI Website Phishing (variant)",
+    "mendeley_hannousse": "Mendeley (Hannousse)",
+    "mendeley_tan": "Mendeley (Tan)",
+}
+SIGFIGS = 6            # significant figures for floats shown in ESM_3
 
 
 def _pdf_metadata(pdf: PdfPages, title: str) -> None:
@@ -245,6 +269,58 @@ def _cell(v) -> str:
     return "" if s.strip().lower() in {"nan", "nat", "none", "<na>"} else s
 
 
+def _numeric_like(series) -> bool:
+    """True for a column of numbers, including one already rendered to text.
+
+    Width fitting needs this after ESM_3 formats its floats to strings: a
+    number is still a single token that must not be wrapped.
+    """
+    if pd.api.types.is_numeric_dtype(series):
+        return True
+    values = [v for v in (_cell(x) for x in series) if v]
+    if not values:
+        return False
+    try:
+        for v in values:
+            float(v)
+    except ValueError:
+        return False
+    return True
+
+
+def _display_value(s: str) -> str:
+    """Rewrite a cell that IS a dataset identifier; leave prose untouched.
+
+    Only a whole-cell identifier and the 'a->b' transfer-direction form are
+    rewritten. Substituting inside free text would corrupt values like
+    'unmapped_uci', which is a mapping status rather than a dataset.
+    """
+    key = s.strip()
+    if key in DATASET_DISPLAY:
+        return DATASET_DISPLAY[key]
+    if "->" in key:
+        parts = [p.strip() for p in key.split("->")]
+        if all(p in DATASET_DISPLAY for p in parts):
+            return " -> ".join(DATASET_DISPLAY[p] for p in parts)
+    return s
+
+
+def _prepare_esm3(df: pd.DataFrame) -> pd.DataFrame:
+    """Presentation pass for ESM_3: significant figures and display names.
+
+    Applies to the rendered document only. The CSVs under results/ and the
+    ESM_1 export keep full float64 precision and the pipeline's own keys.
+    """
+    out = df.copy()
+    for c in out.columns:
+        if pd.api.types.is_float_dtype(out[c]):
+            out[c] = [("" if _cell(v) == "" else f"{float(v):.{SIGFIGS}g}")
+                      for v in out[c]]
+        elif not pd.api.types.is_numeric_dtype(out[c]):
+            out[c] = [_display_value(_cell(v)) for v in out[c]]
+    return out
+
+
 def _char_budget(pt: float) -> int:
     """How many monospace characters fit across the text block at this size."""
     return int(PAGE_W * TEXT_FRAC / (MONO_EM * pt / 72.0))
@@ -265,7 +341,7 @@ def _fit_widths(df: pd.DataFrame, cols: list[str], budget: int,
     shrunk when nothing else is left to take.
     """
     w = {c: max([len(str(c))] + [len(_cell(v)) for v in df[c]]) for c in cols}
-    text_cols = [c for c in cols if not pd.api.types.is_numeric_dtype(df[c])]
+    text_cols = [c for c in cols if not _numeric_like(df[c])]
 
     def span() -> int:
         return sum(w.values()) + 2 * (len(cols) - 1)
@@ -429,7 +505,7 @@ def build_esm3() -> dict:
             if tid in EXCLUDED_TABLES:
                 skipped.append(tid)
                 continue
-            df = scrub_frame(pd.read_csv(p), f"ESM_3 {tid}")
+            df = _prepare_esm3(scrub_frame(pd.read_csv(p), f"ESM_3 {tid}"))
             heading = f"Table {tid.upper()}. {TABLE_CAPTIONS.get(tid, '')}"
             wide = tid in RECORD_WISE_TABLES
             lines, mono, lpp, layout = _render_frame(
